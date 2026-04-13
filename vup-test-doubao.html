@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VUP推荐测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #34495e;
+        }
+        
+        .question {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .option {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .option:hover {
+            border-color: #3498db;
+            background-color: #e3f2fd;
+        }
+        
+        .option.selected {
+            border-color: #3498db;
+            background-color: #e3f2fd;
+        }
+        
+        .button-container {
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        button {
+            padding: 12px 30px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .result {
+            margin-top: 40px;
+            padding: 30px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .result h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .vup-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .vup-card img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 3px solid #3498db;
+        }
+        
+        .vup-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .vup-description {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .vup-features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .feature-tag {
+            background-color: #e3f2fd;
+            color: #2980b9;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .recommendation {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            width: 0%;
+            height: 100%;
+            background-color: #3498db;
+            transition: width 0.5s ease;
+        }
+        
+        .question-number {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>VUP偏好测试</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">回答以下问题，我们将根据你的偏好推荐最适合你的虚拟主播</p>
+        
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        
+        <div class="questions" id="questions">
+            <!-- 问题1 -->
+            <div class="question" data-question="1">
+                <div class="question-number">问题 1/10</div>
+                <h2>你更喜欢什么类型的直播内容？</h2>
+                <div class="options">
+                    <div class="option" data-value="1">游戏直播</div>
+                    <div class="option" data-value="2">聊天互动</div>
+                    <div class="option" data-value="3">才艺展示</div>
+                    <div class="option" data-value="4">学习分享</div>
+                </div>
+            </div>
+            
+            <!-- 问题2 -->
+            <div class="question" data-question="2" style="display: none;">
+                <div class="question-number">问题 2/10</div>
+                <h2>你希望主播的性格是？</h2>
+                <div class="options">
+                    <div class="option" data-value="1">活泼开朗</div>
+                    <div class="option" data-value="2">温柔体贴</div>
+                    <div class="option" data-value="3">幽默风趣</div>
+                    <div class="option" data-value="4">成熟稳重</div>
+                </div>
+            </div>
+            
+            <!-- 问题3 -->
+            <div class="question" data-question="3" style="display: none;">
+                <div class="question-number">问题 3/10</div>
+                <h2>你更喜欢什么风格的主播形象？</h2>
+                <div class="options">
+                    <div class="option" data-value="1">可爱萝莉</div>
+                    <div class="option" data-value="2">成熟御姐</div>
+                    <div class="option" data-value="3">帅气正太</div>
+                    <div class="option" data-value="4">中性风格</div>
+                </div>
+            </div>
+            
+            <!-- 问题4 -->
+            <div class="question" data-question="4" style="display: none;">
+                <div class="question-number">问题 4/10</div>
+                <h2>你通常在什么时间看直播？</h2>
+                <div class="options">
+                    <div class="option" data-value="1">早上</div>
+                    <div class="option" data-value="2">下午</div>
+                    <div class="option" data-value="3">晚上</div>
+                    <div class="option" data-value="4">深夜</div>
+                </div>
+            </div>
+            
+            <!-- 问题5 -->
+            <div class="question" data-question="5" style="display: none;">
+                <div class="question-number">问题 5/10</div>
+                <h2>你希望主播的互动频率是？</h2>
+                <div class="options">
+                    <div class="option" data-value="1">高频互动</div>
+                    <div class="option" data-value="2">中等互动</div>
+                    <div class="option" data-value="3">偶尔互动</div>
+                    <div class="option" data-value="4">专注内容</div>
+                </div>
+            </div>
+            
+            <!-- 问题6 -->
+            <div class="question" data-question="6" style="display: none;">
+                <div class="question-number">问题 6/10</div>
+                <h2>你更喜欢什么类型的游戏？</h2>
+                <div class="options">
+                    <div class="option" data-value="1">竞技游戏</div>
+                    <div class="option" data-value="2">休闲游戏</div>
+                    <div class="option" data-value="3">角色扮演</div>
+                    <div class="option" data-value="4">策略游戏</div>
+                </div>
+            </div>
+            
+            <!-- 问题7 -->
+            <div class="question" data-question="7" style="display: none;">
+                <div class="question-number">问题 7/10</div>
+                <h2>你希望主播的语言风格是？</h2>
+                <div class="options">
+                    <div class="option" data-value="1">标准普通话</div>
+                    <div class="option" data-value="2">地方方言</div>
+                    <div class="option" data-value="3">中英混合</div>
+                    <div class="option" data-value="4">网络流行语</div>
+                </div>
+            </div>
+            
+            <!-- 问题8 -->
+            <div class="question" data-question="8" style="display: none;">
+                <div class="question-number">问题 8/10</div>
+                <h2>你更喜欢多长时间的直播？</h2>
+                <div class="options">
+                    <div class="option" data-value="1">1-2小时</div>
+                    <div class="option" data-value="2">2-4小时</div>
+                    <div class="option" data-value="3">4-6小时</div>
+                    <div class="option" data-value="4">6小时以上</div>
+                </div>
+            </div>
+            
+            <!-- 问题9 -->
+            <div class="question" data-question="9" style="display: none;">
+                <div class="question-number">问题 9/10</div>
+                <h2>你希望主播有什么特长？</h2>
+                <div class="options">
+                    <div class="option" data-value="1">唱歌</div>
+                    <div class="option" data-value="2">画画</div>
+                    <div class="option" data-value="3">游戏技巧</div>
+                    <div class="option" data-value="4">知识分享</div>
+                </div>
+            </div>
+            
+            <!-- 问题10 -->
+            <div class="question" data-question="10" style="display: none;">
+                <div class="question-number">问题 10/10</div>
+                <h2>你最看重主播的什么品质？</h2>
+                <div class="options">
+                    <div class="option" data-value="1">真诚</div>
+                    <div class="option" data-value="2">专业</div>
+                    <div class="option" data-value="3">有趣</div>
+                    <div class="option" data-value="4">努力</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="button-container">
+            <button id="prev-btn" style="display: none; margin-right: 10px; background-color: #95a5a6;">上一题</button>
+            <button id="next-btn">下一题</button>
+            <button id="submit-btn" style="display: none;">提交答案</button>
+        </div>
+        
+        <div class="result" id="result">
+            <h2>为你推荐的VUP</h2>
+            <div class="vup-card">
+                <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=cute%20virtual%20girl%20streamer%20with%20blue%20hair%20and%20purple%20eyes%2C%20anime%20style%2C%20smiling%2C%20professional%20illustration&image_size=square" alt="豆宝">
+                <div class="vup-name">豆宝</div>
+                <div class="vup-description">超可爱的虚拟主播，擅长游戏和聊天互动</div>
+                <div class="vup-features">
+                    <span class="feature-tag">游戏达人</span>
+                    <span class="feature-tag">唱歌好听</span>
+                    <span class="feature-tag">互动频繁</span>
+                    <span class="feature-tag">性格开朗</span>
+                </div>
+                <div class="recommendation">
+                    <p>根据你的偏好测试结果，我们强烈推荐你关注<span style="font-weight: bold; color: #3498db;">豆宝</span>！</p>
+                    <p>豆宝是一位充满活力的虚拟主播，她的直播内容丰富多样，既有精彩的游戏实况，也有轻松愉快的聊天互动。她的性格开朗活泼，总能给观众带来欢乐和正能量。</p>
+                    <p>无论你喜欢什么类型的内容，豆宝都能满足你的需求。她不仅游戏技术精湛，还擅长唱歌和各种才艺展示，是一位全能型的虚拟主播。</p>
+                    <p>赶快去关注豆宝的直播吧，相信你一定会喜欢上这位可爱的虚拟主播！</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 变量初始化
+        let currentQuestion = 1;
+        const totalQuestions = 10;
+        const answers = {};
+        
+        // DOM元素
+        const questions = document.querySelectorAll('.question');
+        const options = document.querySelectorAll('.option');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const resultDiv = document.getElementById('result');
+        const progressBar = document.getElementById('progress');
+        
+        // 选项选择功能
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                // 移除同题其他选项的选中状态
+                const currentOptions = this.parentElement.querySelectorAll('.option');
+                currentOptions.forEach(opt => opt.classList.remove('selected'));
+                // 添加当前选项的选中状态
+                this.classList.add('selected');
+                // 保存答案
+                const questionNum = parseInt(this.closest('.question').getAttribute('data-question'));
+                answers[questionNum] = this.getAttribute('data-value');
+            });
+        });
+        
+        // 下一题按钮
+        nextBtn.addEventListener('click', function() {
+            // 检查是否选择了答案
+            const currentQuestionElement = document.querySelector(`.question[data-question="${currentQuestion}"]`);
+            const selectedOption = currentQuestionElement.querySelector('.option.selected');
+            
+            if (!selectedOption) {
+                alert('请选择一个选项！');
+                return;
+            }
+            
+            // 隐藏当前问题
+            currentQuestionElement.style.display = 'none';
+            
+            // 显示下一个问题
+            currentQuestion++;
+            const nextQuestionElement = document.querySelector(`.question[data-question="${currentQuestion}"]`);
+            nextQuestionElement.style.display = 'block';
+            
+            // 更新进度条
+            updateProgress();
+            
+            // 显示/隐藏按钮
+            updateButtons();
+        });
+        
+        // 上一题按钮
+        prevBtn.addEventListener('click', function() {
+            // 隐藏当前问题
+            document.querySelector(`.question[data-question="${currentQuestion}"]`).style.display = 'none';
+            
+            // 显示上一个问题
+            currentQuestion--;
+            document.querySelector(`.question[data-question="${currentQuestion}"]`).style.display = 'block';
+            
+            // 更新进度条
+            updateProgress();
+            
+            // 显示/隐藏按钮
+            updateButtons();
+        });
+        
+        // 提交按钮
+        submitBtn.addEventListener('click', function() {
+            // 检查是否选择了答案
+            const currentQuestionElement = document.querySelector(`.question[data-question="${currentQuestion}"]`);
+            const selectedOption = currentQuestionElement.querySelector('.option.selected');
+            
+            if (!selectedOption) {
+                alert('请选择一个选项！');
+                return;
+            }
+            
+            // 保存最后一题的答案
+            answers[currentQuestion] = selectedOption.getAttribute('data-value');
+            
+            // 隐藏问题和按钮
+            document.getElementById('questions').style.display = 'none';
+            document.querySelector('.button-container').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'none';
+            
+            // 显示结果
+            resultDiv.style.display = 'block';
+        });
+        
+        // 更新进度条
+        function updateProgress() {
+            const progress = (currentQuestion / totalQuestions) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+        
+        // 更新按钮显示
+        function updateButtons() {
+            if (currentQuestion === 1) {
+                prevBtn.style.display = 'none';
+            } else {
+                prevBtn.style.display = 'inline-block';
+            }
+            
+            if (currentQuestion === totalQuestions) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'inline-block';
+            } else {
+                nextBtn.style.display = 'inline-block';
+                submitBtn.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
